@@ -87,6 +87,12 @@ vagrant@host1:~$ swift -A http://127.0.0.1:12345/auth/v1.0 -U test:tester -K tes
 swift.txt
 ```
 
+If you want to add a storage container on start-up, just define an enviroment variable `SWIFT_DEFAULT_CONTAINER` with a name of required container.
+
+```bash
+vagrant@host1:~$ docker run -d -p 12345:8080 -e SWIFT_DEFAULT_CONTAINER=container_name --volumes-from SWIFT_DATA -t morrisjobke/docker-swift-onlyone
+```
+
 That's it!
 
 ## Todo
