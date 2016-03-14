@@ -74,6 +74,12 @@ if [ ! -z "${SWIFT_DEFAULT_CONTAINER}" ]; then
     swift -A http://localhost:8080/auth/v1.0 -U test:tester -K testing post ${SWIFT_DEFAULT_CONTAINER}
 fi
 
+# Create meta-url-key to allow temp download url generation
+if [ ! -z "${SWIFT_TEMP_URL_KEY}" ]; then
+  echo "Setting X-Account-Meta-Temp-URL-Key..."
+  swift -A http://localhost:8080/auth/v1.0 -U test:tester -K testing post -m "Temp-URL-Key:${SWIFT_TEMP_URL_KEY}"
+fi
+
 #
 # Tail the log file for "docker log $CONTAINER_ID"
 #
