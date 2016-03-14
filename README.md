@@ -93,6 +93,12 @@ If you want to add a storage container on start-up, just define an enviroment va
 vagrant@host1:~$ docker run -d -p 12345:8080 -e SWIFT_DEFAULT_CONTAINER=container_name --volumes-from SWIFT_DATA -t morrisjobke/docker-swift-onlyone
 ```
 
+If you want to allow temporary download url generation, just define an enviroment variable `SWIFT_TEMP_URL_KEY` with a secret key.
+
+```bash
+vagrant@host1:~$ docker run -d -p 12345:8080 -e SWIFT_TEMP_URL_KEY=my_secret_key --volumes-from SWIFT_DATA -t morrisjobke/docker-swift-onlyone
+```
+
 That's it!
 
 ## Todo
