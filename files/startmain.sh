@@ -71,7 +71,10 @@ echo "Starting supervisord..."
 # Create default container
 if [ ! -z "${SWIFT_DEFAULT_CONTAINER}" ]; then
 	echo "Creating default container..."
-    swift -A http://localhost:8080/auth/v1.0 -U test:tester -K testing post ${SWIFT_DEFAULT_CONTAINER}
+	for container in ${SWIFT_DEFAULT_CONTAINER} ; do
+	    echo "Creating container...${container}"
+	    swift -A http://localhost:8080/auth/v1.0 -U admin:admin -K admin post ${container}
+	done
 fi
 
 # Create meta-url-key to allow temp download url generation
