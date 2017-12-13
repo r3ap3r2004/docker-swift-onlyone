@@ -58,10 +58,8 @@ if [ ! -z "${SWIFT_SET_PASSWORDS}" ]; then
 	echo "Setting passwords in /etc/swift/proxy-server.conf..."
 	PASS=`pwgen 12 1`
 	sed -i -e "s/user_admin_admin = admin .admin .reseller_admin/user_admin_admin = $PASS .admin .reseller_admin/g" /etc/swift/proxy-server.conf
-	sed -i -e "s/user_test_tester = testing .admin/user_test_tester = $PASS .admin/g" /etc/swift/proxy-server.conf
-	sed -i -e "s/user_test2_tester2 = testing2 .admin/user_test2_tester2 = $PASS .admin/g" /etc/swift/proxy-server.conf
-	sed -i -e "s/user_test_tester3 = testing3/user_test_tester3 = $PASS/g" /etc/swift/proxy-server.conf
-	grep "user_test" /etc/swift/proxy-server.conf
+	sed -i -e "s/user_chris_chris1234 = testing .admin/user_chris_chris1234 = $PASS .admin/g" /etc/swift/proxy-server.conf
+	grep "user_chris" /etc/swift/proxy-server.conf
 fi
 
 # Start supervisord
@@ -80,7 +78,7 @@ fi
 # Create meta-url-key to allow temp download url generation
 if [ ! -z "${SWIFT_TEMP_URL_KEY}" ]; then
   echo "Setting X-Account-Meta-Temp-URL-Key..."
-  swift -A http://localhost:8080/auth/v1.0 -U test:tester -K testing post -m "Temp-URL-Key:${SWIFT_TEMP_URL_KEY}"
+  swift -A http://localhost:8080/auth/v1.0 -U chris:chris1234 -K testing post -m "Temp-URL-Key:${SWIFT_TEMP_URL_KEY}"
 fi
 
 #
