@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-MAINTAINER curtis <curtis@serverascode.com>
+MAINTAINER fnndsc "dev@babymri.org"
 
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor \
