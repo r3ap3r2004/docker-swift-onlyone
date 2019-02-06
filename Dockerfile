@@ -1,14 +1,16 @@
 FROM ubuntu:16.04
 LABEL Author="beaukode <jeremie.colombo@gmail.com>"
 
-RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update \
+        && apt-get install -y supervisor \
         swift python-swiftclient rsync \
-        swift-proxy swift-object memcached python-keystoneclient \
+        swift-proxy swift-object memcached python-keystone python-keystoneclient \
         python-swiftclient swift-plugin-s3 python-netifaces \
         python-xattr python-memcache \
         swift-account swift-container swift-object pwgen \
-        rsyslog
+        rsyslog curl python-openstackclient keystone \
+        uwsgi uwsgi-plugin-python \
+        && rm -rf /var/lib/apt/lists/*
 
 COPY files/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
@@ -20,6 +22,6 @@ COPY files/rsyncd.conf /etc/rsyncd.conf
 COPY files/startmain.sh /usr/local/bin/startmain.sh
 RUN chmod 755 /usr/local/bin/*.sh
 
-EXPOSE 8080
+EXPOSE 8080 5000
 
 CMD /usr/local/bin/startmain.sh
