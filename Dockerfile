@@ -1,5 +1,5 @@
-FROM ubuntu:18.04
-MAINTAINER fnndsc "dev@babymri.org"
+FROM ubuntu:16.04
+LABEL Author="beaukode <jeremie.colombo@gmail.com>"
 
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor \
