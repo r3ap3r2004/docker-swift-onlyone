@@ -123,6 +123,7 @@ if [[ "$success" = false ]]; then
     exit 1
 fi
 openstack service create --name swift object-store
+sleep 1
 openstack endpoint create \
     --publicurl 'http://localhost:8080/v1/AUTH_$(tenant_id)s' \
     --adminurl 'http://localhost:8080/' \
