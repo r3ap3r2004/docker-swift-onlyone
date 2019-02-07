@@ -1,6 +1,8 @@
+*WARNING*: This container is suitable *only for devloppement and testing do not use in production* this is my first openstack (as server) project and it wasn't done with security or stability in mind.
+
 # Docker OpenStack Swift onlyone
 
-This is a docker file based on the latest Ubuntu 18.04 official docker image that creates an OpenStack Swift image which has only one replica and only one device. Why would this be useful? I think that Docker and OpenStack Swift go together like peas and carrots. Distributed files systems are a pain, so why not just use OpenStack Swift? Scaling is not as much of an issue with object storage. Many Docker containers, even on separate hosts, can use one OpenStack Swift container to persist files.
+This is a docker file based on the Ubuntu 16.04 official docker image that creates an OpenStack Swift image which has only one replica and only one device. Why would this be useful? I think that Docker and OpenStack Swift go together like peas and carrots. Distributed files systems are a pain, so why not just use OpenStack Swift? Scaling is not as much of an issue with object storage. Many Docker containers, even on separate hosts, can use one OpenStack Swift container to persist files.
 
 But then why only one replica and one device? I think that "onlyone" is a good starting point. It will make it easy for developers to get used to using object storage instead of a file system, and when they need the eventual consistency and multiple replicas provided by a larger OpenStack Swift cluster they can work on implementing that. I don't see one replica as an issue in small systems or for a proof-of-concept because it can just be backed up.
 
@@ -21,7 +23,7 @@ $ docker volume create swift_storage
 Create the "onlyone" container. 
 
 ```bash
-$ docker run -d --name swift-onlyone -p 12345:8080 -v swift_storage:/srv -t fnndsc/docker-swift-onlyone
+$ docker run -d --rm --name swift-onlyone -p 8080:8080 -p 5000:5000 -v swift_storage:/srv -t beaukode/docker-swift-onlyone-authv2-keystone
 ```
 
 With that container running we can now check the logs.
@@ -34,50 +36,47 @@ At this point OpenStack Swift is running.
 
 ```bash
 $ docker ps
-CONTAINER ID        IMAGE                                     COMMAND                  CREATED             STATUS              PORTS                     NAMES
-751d3b5b4575        fnndsc/docker-swift-onlyone               "/bin/sh -c /usr/loc…"   11 seconds ago      Up 10 seconds       0.0.0.0:12345->8080/tcp   swift-onlyone
+CONTAINER ID        IMAGE                                           COMMAND                  CREATED             STATUS              PORTS                                            NAMES
+5d67fd3dd72b        beaukode/docker-swift-onlyone-authv2-keystone   "/bin/sh -c /usr/loc…"   3 seconds ago       Up 2 seconds        0.0.0.0:5000->5000/tcp, 0.0.0.0:8080->8080/tcp   swift-onlyone
 ```
 
-We can now use the Swift python client to access Swift using the Docker forwarded port, in this example port 12345.
+We can now use the Swift python client to access Swift using the Docker forwarded port, in this example port 8080.
 
 ```bash
-$ swift -A http://127.0.0.1:12345/auth/v1.0 -U chris:chris1234 -K testing stat
-       Account: AUTH_chris
-    Containers: 0
-       Objects: 0
-         Bytes: 0
-  Content-Type: text/plain; charset=utf-8
-   X-Timestamp: 1402463864.77057
-    X-Trans-Id: tx4e7861ebab8244c09dad9-005397e678
-X-Put-Timestamp: 1402463864.77057
+$ swift -A http://127.0.0.1:5000/v2.0 --os-username admin --os-password s3cr3t --os-tenant-name admin stat
+        Account: AUTH_bdc0f7b92bdb4545ba9742d9b81fd29c
+     Containers: 0
+        Objects: 0
+          Bytes: 0
+   Content-Type: text/plain; charset=utf-8
+    X-Timestamp: 1549462858.74897
+X-Put-Timestamp: 1549462858.74897
+     X-Trans-Id: tx141a2866e0564cc6a8526-005c5aed4a
 ```
 
 If you want to add a storage container on start-up, just define an enviroment variable `SWIFT_DEFAULT_CONTAINER` with a name of required container.
 
 ```bash
-$ docker run -d --name swift-onlyone -p 12345:8080 -e SWIFT_DEFAULT_CONTAINER=user_uploads -v swift_storage:/srv -t fnndsc/docker-swift-onlyone
-```
-
-If you want to allow temporary download url generation, just define an enviroment variable `SWIFT_TEMP_URL_KEY` with a secret key.
-
-```bash
-$ docker run -d --name swift-onlyone -p 12345:8080 -e SWIFT_TEMP_URL_KEY=my_secret_key -v swift_storage:/srv -t fnndsc/docker-swift-onlyone 
+$ docker run -d --name swift-onlyone -p 8080:8080 -p 5000:5000 -e SWIFT_DEFAULT_CONTAINER=user_uploads -v swift_storage:/srv -t beaukode/docker-swift-onlyone-authv2-keystone
 ```
 
 Try uploading a file:
 
 ```bash
-$ swift -A http://127.0.0.1:12345/auth/v1.0 -U chris:chris1234 -K testing upload --object-name mypdf.pdf user_uploads ./anypdf.pdf
+$ swift -A http://127.0.0.1:5000/v2.0 --os-username admin --os-password s3cr3t --os-tenant-name admin upload --object-name mypdf.pdf user_uploads ./mypdf.pdf
 ```
 
 Try downloading a file:
 
 ```bash
-$ swift -A http://127.0.0.1:12345/auth/v1.0 -U chris:chris1234 -K testing download user_uploads mypdf.pdf
+$ swift -A http://127.0.0.1:5000/v2.0 --os-username admin --os-password s3cr3t --os-tenant-name admin download user_uploads mypdf.pdf
 ```
 
 That's it!
 
 ## Todo
 
-* It seems supervisord running as root in the container, a better way to do this?
+* Test and fix usage of env vars KEYSTONE_* + SWIFT_DEFAULT_CONTAINER. May don't work anymore since fork
+* Update to ubuntu 18.04
+
+Any fix or features are welcome, please open a pull request
