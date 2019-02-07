@@ -14,6 +14,9 @@ This Dockerfile uses [supervisord][] to manage the processes. The most idiomatic
 
 ## Usage
 
+Default configuration allow only localhost access to swift.
+If you need access from external container you need to set environment variable PUBLIC_HOST to this container hostname
+
 Create a volume for Swift.
 
 ```bash

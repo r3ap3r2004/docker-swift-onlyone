@@ -61,13 +61,15 @@ admin_role=${KEYSTONE_ROLE:-"admin"}
 admin_service=${KEYSTONE_SERVICE:-"keystone"}
 admin_region=${KEYSTONE_REGION:-"RegionOne"}
 
+public_host=${PUBLIC_HOST:-"localhost"}
+
 if [[ "$KEYSTONE_HOST" ]]; then
     admin_url="http://${KEYSTONE_HOST}:35357"
     public_url="http://${KEYSTONE_HOST}:5000"
     internal_url="http://${KEYSTONE_HOST}:5000"
 else
     admin_url=${KEYSTONE_ADMIN_URL:-"http://localhost:35357"}
-    public_url=${KEYSTONE_PUBLIC_URL:-"http://localhost:5000"}
+    public_url=${KEYSTONE_PUBLIC_URL:-"http://${public_host}:5000"}
     internal_url=${KEYSTONE_INTERNAL_URL:-"http://localhost:5000"}
 fi
 
@@ -125,7 +127,7 @@ fi
 openstack service create --name swift object-store
 sleep 1
 openstack endpoint create \
-    --publicurl 'http://localhost:8080/v1/AUTH_$(tenant_id)s' \
+    --publicurl "http://${public_host}:8080/v1/AUTH_\$(tenant_id)s" \
     --adminurl 'http://localhost:8080/' \
     --internalurl 'http://localhost:8080/v1/AUTH_$(tenant_id)s' \
     --region RegionOne swift
