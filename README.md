@@ -1,4 +1,4 @@
-*WARNING*: This container is suitable *only for devloppement and testing do not use in production* this is my first openstack (as server) project and it wasn't done with security or stability in mind.
+**WARNING**: This container is suitable **only for devloppement and testing do not use in production** this is my first openstack (as server) project and it wasn't done with security or stability in mind.
 
 # Docker OpenStack Swift onlyone
 
