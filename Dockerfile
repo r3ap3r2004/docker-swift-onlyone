@@ -9,7 +9,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
         python-xattr python-memcache \
         swift-account swift-container swift-object pwgen \
         rsyslog curl python-openstackclient keystone \
-        uwsgi uwsgi-plugin-python \
+        uwsgi uwsgi-plugin-python netcat-openbsd \
         && rm -rf /var/lib/apt/lists/*
 
 COPY files/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -22,6 +22,6 @@ COPY files/rsyncd.conf /etc/rsyncd.conf
 COPY files/startmain.sh /usr/local/bin/startmain.sh
 RUN chmod 755 /usr/local/bin/*.sh
 
-EXPOSE 8080 5000
+EXPOSE 8080 5000 5001
 
 CMD /usr/local/bin/startmain.sh

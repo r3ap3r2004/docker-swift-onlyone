@@ -132,9 +132,12 @@ openstack endpoint create \
     --internalurl 'http://localhost:8080/v1/AUTH_$(tenant_id)s' \
     --region RegionOne swift
 
+
+echo "Swift is ready to use binding port 5001"
+nc -vv -lk 5001 & # We can wait for this port to know if swift is ready
+
 #
 # Tail the log file for "docker log $CONTAINER_ID"
 #
-
 echo "Starting to tail /var/log/syslog...(hit ctrl-c if you are starting the container in a bash shell)"
 exec tail -n 0 -F /var/log/syslog
