@@ -14,8 +14,8 @@ This Dockerfile uses [supervisord][] to manage the processes. The most idiomatic
 
 ## Usage
 
-Default configuration allow only localhost access to swift.
-If you need access from external container you need to set environment variable PUBLIC_HOST to this container hostname.
+Default configuration **allow only localhost** access to swift.
+If you need access from external container you need to **set environment variable PUBLIC_HOST** to this container hostname.
 
 When swift service is ready this container open TCP 5001 port.
 This is usefull to know when you can start running tests by waiting this port with dockerize for example.
